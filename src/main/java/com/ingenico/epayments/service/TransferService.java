@@ -93,8 +93,9 @@ public class TransferService {
 
         // todo: acquire a global lock on fromAccount to avoid race condition
 
+
         // balance remains positive, so it's not overdrawn
-        if (fromAccount.getBalance() - amount > 0.00000000000) {
+        if (fromAccount.getBalance().compareTo(amount) >= 0) {
 
             // it would be nicer to use an aspect for testing purposes
             // delay this transaction on purpose to demonstrate the culprit

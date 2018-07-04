@@ -65,6 +65,37 @@ public class TransferServiceTests {
         assertEquals(transferCountBefore, transferCountAfter);
     }
 
+
+
+    @Test
+    public void depletedAccountTest() {
+
+        transferService.cleanRepo();
+        transferService.createMonetaryAccount("anna", 100.0);
+        transferService.createMonetaryAccount("bob", 0.0);
+
+        transferService.doTransfer("anna", "bob", 100.0);
+        assertEquals(transferService.getMonetaryAccount("anna").getBalance(), 0.0, 1e-10);
+        assertEquals(transferService.getMonetaryAccount("bob").getBalance(), 100.0, 1e-10);
+    }
+
+    @Test
+    public void repeatedTransfersTest() {
+
+        transferService.cleanRepo();
+
+        transferService.createMonetaryAccount("anna", 100.0);
+        transferService.createMonetaryAccount("bob", 0.0);
+
+
+        for (int i = 1; i <= 100; i++) {
+            transferService.doTransfer("anna", "bob", 1.0);
+        }
+
+        assertEquals(transferService.getMonetaryAccount("anna").getBalance(), 0.0, 1e-10);
+        assertEquals(transferService.getMonetaryAccount("bob").getBalance(), 100.0, 1e-10);
+    }
+
     @Test
     public void simpleConcurrencyTest() {
         transferService.cleanRepo();
@@ -77,7 +108,6 @@ public class TransferServiceTests {
 
         assertNull(t2);
         assertEquals(transferService.getMonetaryAccount("elmo").getBalance(), 2.0, 1e-10);
-
     }
 
 }
